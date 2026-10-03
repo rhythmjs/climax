@@ -1,0 +1,82 @@
+{
+  "name": "@rhythmjs/climax",
+  "version": "0.0.1",
+  "description": "General-purpose building blocks for Rhythm CLIs. Currently: command documentation and --help output (doc-only middlewares plus a module that renders help from the cli's registered commands).",
+  "keywords": [
+    "cli",
+    "documentation",
+    "help",
+    "middleware",
+    "rhythm"
+  ],
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhythmjs/climax.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./help/metadata": {
+      "types": "./dist/help/metadata/metadata.d.ts",
+      "default": "./dist/help/metadata/metadata.js"
+    },
+    "./help/command": {
+      "types": "./dist/help/command/command.d.ts",
+      "default": "./dist/help/command/command.js"
+    },
+    "./help/option": {
+      "types": "./dist/help/option/option.d.ts",
+      "default": "./dist/help/option/option.js"
+    },
+    "./help/generate": {
+      "types": "./dist/help/generate/generate.d.ts",
+      "default": "./dist/help/generate/generate.js"
+    },
+    "./help/render": {
+      "types": "./dist/help/render/render.d.ts",
+      "default": "./dist/help/render/render.js"
+    },
+    "./help/module": {
+      "types": "./dist/help/module/module.d.ts",
+      "default": "./dist/help/module/module.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "bun build src/help/metadata/metadata.ts src/help/command/command.ts src/help/option/option.ts src/help/generate/generate.ts src/help/render/render.ts src/help/module/module.ts --outdir dist --root src --format esm --target bun --packages external --splitting && tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run check && bun test && bun run build",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "lint": "oxlint src",
+    "fmt": "prettier --write \"src/**/*.ts\" \"*.json\"",
+    "fmt:check": "prettier --check \"src/**/*.ts\" \"*.json\"",
+    "check": "bun run fmt:check && bun run lint && bun run typecheck"
+  },
+  "devDependencies": {
+    "@rhythmjs/cli": "^0.0.16",
+    "@rhythmjs/rhythm": "^0.0.16",
+    "@types/bun": "^1.2.0",
+    "@types/node": "^26.6.3",
+    "oxlint": "^1.0.0",
+    "prettier": "^3.5.0",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "@rhythmjs/cli": ">=0.0.16",
+    "@rhythmjs/rhythm": ">=0.0.16"
+  },
+  "engines": {
+    "bun": ">=1.2.0"
+  },
+  "overrides": {
+    "@rhythmjs/rhythm": "file:../rhythm/packages/rhythm",
+    "@rhythmjs/cli": "file:../rhythm/packages/cli"
+  }
+}
