@@ -20,6 +20,7 @@ describe("resolve", () => {
   test("distinguishes index, command, group and unknown", () => {
     expect(resolve(docs, []).kind).toBe("index");
     expect(resolve(docs, ["deploy", "prod"]).kind).toBe("command");
+    expect(resolve(docs, ["deploy"]).kind).toBe("command");
     expect(resolve(docs, ["user"]).kind).toBe("group");
     expect(resolve(docs, ["nope"]).kind).toBe("none");
   });

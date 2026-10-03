@@ -23,13 +23,23 @@ function fits(segments: readonly string[], tokens: readonly string[]): boolean {
   return fixed.every((segment, i) => tokens[i] === undefined || isParam(segment) || segment === tokens[i]);
 }
 
+function literalsOf(segments: readonly string[]): readonly string[] {
+  const end = segments.findIndex((segment) => isParam(segment) || segment === "**");
+  return end === -1 ? segments : segments.slice(0, end);
+}
+
+function named(segments: readonly string[], tokens: readonly string[]): boolean {
+  const literals = literalsOf(segments);
+  return literals.length === tokens.length && literals.every((literal, i) => literal === tokens[i]);
+}
+
 function startsWith(segments: readonly string[], tokens: readonly string[]): boolean {
   return segments.length > tokens.length && tokens.every((token, i) => isParam(segments[i]!) || segments[i] === token);
 }
 
 export function resolve(docs: readonly CommandDoc[], topic: readonly string[]): Resolved {
   if (!topic.length) return { kind: "index" };
-  const exact = docs.find((doc) => fits(doc.segments, topic));
+  const exact = docs.find((doc) => fits(doc.segments, topic)) ?? docs.find((doc) => named(doc.segments, topic));
   if (exact) return { kind: "command", doc: exact };
   const group = docs.filter((doc) => startsWith(doc.segments, topic));
   return group.length ? { kind: "group", docs: group } : { kind: "none" };
