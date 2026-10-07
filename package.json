@@ -1,6 +1,6 @@
 {
   "name": "@rhythmjs/climax",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "General-purpose building blocks for Rhythm CLIs. Currently: command documentation and --help output (doc-only middlewares plus a module that renders help from the cli's registered commands).",
   "keywords": [
     "cli",
@@ -64,8 +64,8 @@
     "check": "bun run fmt:check && bun run lint && bun run typecheck"
   },
   "devDependencies": {
-    "@rhythmjs/cli": "^0.0.19",
-    "@rhythmjs/rhythm": "^0.0.19",
+    "@rhythmjs/cli": "^0.0.20",
+    "@rhythmjs/rhythm": "^0.0.20",
     "@types/bun": "^1.2.0",
     "@types/node": "^26.6.3",
     "oxlint": "^1.0.0",
