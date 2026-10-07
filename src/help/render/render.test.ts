@@ -1,19 +1,20 @@
 import { describe, expect, test } from "bun:test";
 import { RhythmCli } from "@rhythmjs/cli";
+import { documented } from "../documented/documented";
 import { commandHelp } from "../command/command";
 import { generate } from "../generate/generate";
 import { optionHelp } from "../option/option";
 import { render, resolve } from "./render";
 
-const cli = new RhythmCli()
-  .command(
+const cli = documented(new RhythmCli())
+  .cmd(
     "deploy :environment",
     commandHelp({ summary: "Deploy the app", description: "Ships it.", examples: ["app deploy prod"] }),
     optionHelp({ name: "force", alias: "f", type: "boolean", description: "Skip checks", default: false }),
     () => {},
   )
-  .command("user add :name", commandHelp({ summary: "Add a user", deprecated: "use invite" }), () => {})
-  .command("user remove :name", () => {});
+  .cmd("user add :name", commandHelp({ summary: "Add a user", deprecated: "use invite" }), () => {})
+  .cmd("user remove :name", () => {});
 const docs = generate(cli);
 
 describe("resolve", () => {

@@ -1,4 +1,4 @@
-import { Rhythm } from "@rhythmjs/rhythm";
+import { Pipeline, withSource, type MountMiddleware, type Next } from "@rhythmjs/rhythm";
 import type { RhythmCliContext } from "@rhythmjs/cli/context";
 import { generate, isCliSource, type CommandDoc, type GenerateOptions } from "../generate/generate";
 import { render, resolve, type RenderOptions } from "../render/render";
@@ -28,20 +28,25 @@ function optionsOf(argv: readonly string[]): readonly string[] {
   return end === -1 ? argv : argv.slice(0, end);
 }
 
+class HelpSource extends Pipeline<RhythmCliContext> {
+  override callback() {
+    return async () => {};
+  }
+}
+
 export const helpModule = {
   forRoot(options: HelpOptions = {}) {
     const { command = "help", name, description, ...generateOptions } = options;
     const renderOptions: RenderOptions = { name, description };
+    const source = new HelpSource({ name: "help", type: "module" });
 
     let cached: readonly CommandDoc[] | undefined;
     const helpService: HelpService = {
       commands() {
         if (!cached) {
-          const scope = module.parent;
+          const scope = source.parent;
           if (!scope) {
-            throw new Error(
-              "helpModule documents the app it is registered in: add it with app.register(helpModule.forRoot(...))",
-            );
+            throw new Error("helpModule documents the app it is used in: add it with app.use(helpModule.forRoot(...))");
           }
           cached = generate(scope.sources.filter(isCliSource), generateOptions);
         }
@@ -52,9 +57,7 @@ export const helpModule = {
       },
     };
 
-    const module = new Rhythm<RhythmCliContext, { helpService: HelpService }>({ type: "module", name: "help" });
-    module.context.helpService = helpService;
-    return module.use(async (ctx, next) => {
+    const middleware = async (ctx: RhythmCliContext, next: Next) => {
       const flagged = optionsOf(ctx.argv).some((token) => HELP_FLAGS.has(token));
       const positionals = positionalsOf(ctx.argv);
       const asCommand = command !== false && positionals[0] === command;
@@ -65,8 +68,12 @@ export const helpModule = {
 
       const topic = asCommand ? positionals.slice(1) : positionals;
       const docs = helpService.commands();
-      for (const line of helpService.render(topic)) ctx.response.print(line);
-      if (resolve(docs, topic).kind === "none") ctx.response.exit(1);
-    });
+      for (const line of helpService.render(topic)) ctx.log(line);
+      if (resolve(docs, topic).kind === "none") ctx.exitCode = 1;
+      // `params` marks the command as handled for toCliHandler, which otherwise reports "unknown command".
+      Object.assign(ctx, { params: {} });
+    };
+
+    return Object.assign(withSource(middleware, source) as MountMiddleware<RhythmCliContext>, { helpService });
   },
 };
