@@ -1,6 +1,6 @@
 {
   "name": "@rhythmjs/climax",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "General-purpose building blocks for Rhythm CLIs. Currently: command documentation and --help output (doc-only middlewares plus a module that renders help from the cli's registered commands).",
   "keywords": [
     "cli",
@@ -54,6 +54,8 @@
     "access": "public"
   },
   "scripts": {
+    "clean": "rm -rf dist",
+    "prebuild": "bun run clean",
     "build": "bun build src/help/metadata/metadata.ts src/help/command/command.ts src/help/option/option.ts src/help/documented/documented.ts src/help/generate/generate.ts src/help/render/render.ts src/help/module/module.ts --outdir dist --root src --format esm --target bun --packages external --splitting && tsc -p tsconfig.build.json",
     "prepublishOnly": "bun run check && bun test && bun run build",
     "typecheck": "tsc --noEmit",
@@ -64,8 +66,8 @@
     "check": "bun run fmt:check && bun run lint && bun run typecheck"
   },
   "devDependencies": {
-    "@rhythmjs/cli": "^0.0.20",
-    "@rhythmjs/rhythm": "^0.0.20",
+    "@rhythmjs/cli": "^0.0.21",
+    "@rhythmjs/rhythm": "^0.0.21",
     "@types/bun": "^1.2.0",
     "@types/node": "^26.6.3",
     "oxlint": "^1.0.0",
