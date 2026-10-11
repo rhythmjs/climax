@@ -5,13 +5,14 @@ import { toCliHandler } from "@rhythmjs/cli/run";
 import { documented } from "../documented/documented";
 import { commandHelp } from "../command/command";
 import { helpModule } from "./module";
+import { log } from "@rhythmjs/cli/output";
 
 function build(options = {}) {
   const cli = documented(new RhythmCli()).cmd(
     "deploy :environment",
     commandHelp({ summary: "Deploy the app" }),
     (ctx) => {
-      ctx.log(`deploying ${ctx.params.environment}`);
+      log(ctx, `deploying ${ctx.params.environment}`);
     },
   );
   const app = new Rhythm().use(helpModule.forRoot({ name: "app", ...options })).use(mount(cli));

@@ -2,6 +2,7 @@ import { Pipeline, withSource, type MountMiddleware, type Next } from "@rhythmjs
 import type { RhythmCliContext } from "@rhythmjs/cli/context";
 import { generate, isCliSource, type CommandDoc, type GenerateOptions } from "../generate/generate";
 import { render, resolve, type RenderOptions } from "../render/render";
+import { log } from "@rhythmjs/cli/output";
 
 export interface HelpOptions extends GenerateOptions, RenderOptions {
   command?: string | false;
@@ -68,7 +69,7 @@ export const helpModule = {
 
       const topic = asCommand ? positionals.slice(1) : positionals;
       const docs = helpService.commands();
-      for (const line of helpService.render(topic)) ctx.log(line);
+      for (const line of helpService.render(topic)) log(ctx, line);
       if (resolve(docs, topic).kind === "none") ctx.exitCode = 1;
       // `params` marks the command as handled for toCliHandler, which otherwise reports "unknown command".
       Object.assign(ctx, { params: {} });

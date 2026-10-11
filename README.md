@@ -10,7 +10,7 @@ It sits on top of `@rhythmjs/cli`. You document commands with small doc-only mid
 bun add @rhythmjs/climax @rhythmjs/cli @rhythmjs/rhythm
 ```
 
-Peer dependencies: `@rhythmjs/cli >=0.0.18` and `@rhythmjs/rhythm >=0.0.18`. Bun `>=1.2.0` is required.
+Peer dependencies: `@rhythmjs/cli >=0.0.24` and `@rhythmjs/rhythm >=0.0.24`. Bun `>=1.2.0` is required.
 
 ## Using it with Rhythm
 
@@ -55,7 +55,7 @@ Mounting a child cli works the same way, and the child must be documented too:
 
 ```ts
 const db = documented(new RhythmCli()).cmd("db migrate", commandHelp({ summary: "Run migrations" }), (ctx) =>
-  ctx.log("migrating"),
+  log(ctx, "migrating"),
 );
 
 const cli = documented(new RhythmCli({ name: "app" })).use(mount(db));
